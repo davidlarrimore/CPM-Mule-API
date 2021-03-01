@@ -9,14 +9,14 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
     <http:request-config name="GithubApi" doc:name="HTTP Request configuration" doc:id="09992ecb-c1fe-417c-ae5c-bc0c6515d08e">
 		<http:request-connection host="api.github.com" protocol="HTTPS">
 			<http:authentication >
-				<http:basic-authentication username="davidlarrimore@gmail.com" password="00da38fdd667bdf894b053b727f462e623425ccb" />
+				<http:basic-authentication username="davidlarrimore@gmail.com" password='envVar("GITHUBPAT")' />
 			</http:authentication>
 		</http:request-connection>
 	</http:request-config>
 	<http:request-config name="GithubRaw" doc:name="HTTP Request configuration" doc:id="25ec78a6-e046-4867-9c09-a70e66c81409" >
 		<http:request-connection protocol="HTTPS" host="raw.githubusercontent.com" >
 			<http:authentication >
-				<http:basic-authentication username="davidlarrimore@gmail.com" password="00da38fdd667bdf894b053b727f462e623425ccb" />
+				<http:basic-authentication username="davidlarrimore@gmail.com" password='envVar("GITHUBPAT")' />
 			</http:authentication>
 		</http:request-connection>
 	</http:request-config>
@@ -178,7 +178,7 @@ output application/json
 				</http:request>
 			</route>
 			<route >
-				<http:request method="GET" doc:name="Github API Commits" doc:id="500b8296-0e67-4ab8-a94c-b795d8c239b8" config-ref="GithubApi" path="/repos/{owner}/{repo}/commits" target="commitspayload">
+				<http:request method="GET" doc:name="Github API Commits" doc:id="500b8296-0e67-4ab8-a94c-b795d8c239b8" config-ref="GithubApi" path="/repos/{owner}/{repo}/commits/master" target="commitspayload">
 					<http:uri-params><![CDATA[#[output application/java
 ---
 {
@@ -204,11 +204,11 @@ output application/json
 output application/json
 ---
 {
-	"sfdxproject":read(vars.sfdxpayloadstring,"application/json"), 
+	"SFDXProject":read(vars.sfdxpayloadstring,"application/json"), 
 	"repo":vars.repopayload,
     "tags":vars.tagspayload,
-    "commits":vars.commitspayload,
-    "releases":vars.releasespayload   
+    "latestCommit":vars.commitspayload,
+    "latestRelease":vars.releasespayload   
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
