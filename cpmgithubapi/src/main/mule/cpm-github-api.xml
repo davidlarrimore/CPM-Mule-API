@@ -197,6 +197,16 @@ output application/json
 }]]]></http:uri-params>
 				</http:request>
 			</route>
+			<route >
+				<http:request method="GET" doc:name="Github API Users" doc:id="99e73a8f-3b5e-4522-b8fa-9e32a0860762" config-ref="GithubApi" path="/users/{owner}" target="ownerpayload">
+					<http:uri-params><![CDATA[#[output application/java
+---
+{
+	owner : attributes.uriParams.'owner',
+	repo : attributes.uriParams.'repo'
+}]]]></http:uri-params>
+				</http:request>
+			</route>
 		</scatter-gather>
 		<ee:transform doc:name="Transform Message" doc:id="3002ed6a-6583-473f-a5b5-867fce2870b8" >
 			<ee:message >
@@ -208,7 +218,8 @@ output application/json
 	"repo":vars.repopayload,
     "tags":vars.tagspayload,
     "latestCommit":vars.commitspayload,
-    "latestRelease":vars.releasespayload   
+    "latestRelease":vars.releasespayload,
+    "owner":vars.ownerpayload  
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
