@@ -149,13 +149,25 @@ output application/json
 		<scatter-gather doc:name="Scatter-Gather" doc:id="b34a9f91-55b6-4d73-8028-c674ed34242a" >
 			<route >
 				<http:request method="GET" doc:name="Github SFDX Project" doc:id="f3daea67-a867-43f5-a4fd-d1478de088bc" config-ref="GithubRaw" path="/{owner}/{repo}/master/sfdx-project.json" target="sfdxpayloadstring">
-			<http:uri-params><![CDATA[#[output application/java
+			<error-mapping targetType="APP:ERROR_HANDLER" />
+					<http:uri-params><![CDATA[#[output application/java
 ---
 {
 	owner : attributes.uriParams.'owner',
 	repo : attributes.uriParams.'repo'
 }]]]></http:uri-params>
+					<http:response-validator >
+						<http:success-status-code-validator values="200, 201, 400, 403, 404" />
+					</http:response-validator>
 		</http:request>
+				<choice doc:name="Choice" doc:id="c1788591-13e2-4f59-af34-8fb1cdbe8376" >
+					<when doc:id="35dd6321-6837-44f6-9934-08d1660de21a" expression='#[vars.sfdxpayloadstring != "404: Not Found"]'>
+						<set-variable value='#[output application/json&#10;---&#10;read(vars.sfdxpayloadstring,"application/json")]' doc:name="Set Variable" doc:id="a0b8a499-81f2-46b6-9c4e-9a7bcea822df" variableName="sfdxpayload"/>
+					</when>
+					<otherwise >
+						<set-variable value="#[output application/json&#10;---&#10;null]" doc:name="Set Variable" doc:id="9b83ff97-5514-410d-a168-28bc003e608c" variableName="sfdxpayload"/>
+					</otherwise>
+				</choice>
 			</route>
 			<route >
 				<http:request method="GET" doc:name="Github API Repo" doc:id="49531f8d-3d08-48a9-919c-1c069cf83f81" config-ref="GithubApi" path="/repos/{owner}/{repo}" target="repopayload">
@@ -165,6 +177,9 @@ output application/json
 	owner : attributes.uriParams.'owner',
 	repo : attributes.uriParams.'repo'
 }]]]></http:uri-params>
+					<http:response-validator >
+						<http:success-status-code-validator values="200, 201, 400, 403, 404" />
+					</http:response-validator>
 		</http:request>
 			</route>
 			<route >
@@ -175,26 +190,37 @@ output application/json
 	owner : attributes.uriParams.'owner',
 	repo : attributes.uriParams.'repo'
 }]]]></http:uri-params>
+					<http:response-validator >
+						<http:success-status-code-validator values="200, 201, 400, 403, 404" />
+					</http:response-validator>
 				</http:request>
 			</route>
 			<route >
 				<http:request method="GET" doc:name="Github API Commits" doc:id="500b8296-0e67-4ab8-a94c-b795d8c239b8" config-ref="GithubApi" path="/repos/{owner}/{repo}/commits/master" target="commitspayload">
+					<error-mapping targetType="APP:ERROR" />
 					<http:uri-params><![CDATA[#[output application/java
 ---
 {
 	owner : attributes.uriParams.'owner',
 	repo : attributes.uriParams.'repo'
 }]]]></http:uri-params>
+					<http:response-validator >
+						<http:success-status-code-validator values="200, 201, 400, 403, 404" />
+					</http:response-validator>
 				</http:request>
 			</route>
 			<route >
 				<http:request method="GET" doc:name="Github API Releases" doc:id="89a49d73-cd17-4d2f-8c13-bdf62a3be65f" config-ref="GithubApi" path="/repos/{owner}/{repo}/releases/latest" target="releasespayload">
+					<error-mapping targetType="APP:ERROR" />
 					<http:uri-params><![CDATA[#[output application/java
 ---
 {
 	owner : attributes.uriParams.'owner',
 	repo : attributes.uriParams.'repo'
 }]]]></http:uri-params>
+					<http:response-validator >
+						<http:success-status-code-validator values="200, 201, 400, 403, 404" />
+					</http:response-validator>
 				</http:request>
 			</route>
 			<route >
@@ -205,6 +231,9 @@ output application/json
 	owner : attributes.uriParams.'owner',
 	repo : attributes.uriParams.'repo'
 }]]]></http:uri-params>
+					<http:response-validator >
+						<http:success-status-code-validator values="200, 201, 400, 403, 404" />
+					</http:response-validator>
 				</http:request>
 			</route>
 		</scatter-gather>
@@ -214,7 +243,7 @@ output application/json
 output application/json
 ---
 {
-	"SFDXProject":read(vars.sfdxpayloadstring,"application/json"), 
+	"SFDXProject":vars.sfdxpayload, 
 	"repo":vars.repopayload,
     "tags":vars.tagspayload,
     "latestCommit":vars.commitspayload,

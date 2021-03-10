@@ -152,4 +152,31 @@ type releasespayload = {|
       </types:output-event>
     </types:processor-declaration>
   </types:enrichment>
+  <types:enrichment select="#35dd6321-6837-44f6-9934-08d1660de21a">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:variables>
+          <types:variable name="sfdxpayloadstring" type="sfdxpayloadstring"/>
+        </types:variables>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#a0b8a499-81f2-46b6-9c4e-9a7bcea822df">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:variables>
+          <types:variable name="sfdxpayloadstring" type="sfdxpayloadstring"/>
+        </types:variables>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#9b83ff97-5514-410d-a168-28bc003e608c">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:variables>
+          <types:variable name="sfdxpayloadstring" type="sfdxpayloadstring"/>
+        </types:variables>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
 </types:mule>
